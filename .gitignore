@@ -1,3 +1,7 @@
+# sizeable lexicons
+data/SWN
+data/aclImdb
+
 # Byte-compiled / optimized / DLL files
 ._*
 .DS_Store
