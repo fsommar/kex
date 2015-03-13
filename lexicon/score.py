@@ -1,3 +1,4 @@
+# vim: tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 import sys, operator
 
 MAIN_PATH = "../data/aclImdb/test"
@@ -17,13 +18,15 @@ def score(analyze, tests=[]):
     tests = ['pos','neg']
 
   res = "\nResults:\n"
-  for label, path, op in [('pos', POS_PATH, operator.gt), ('neg', NEG_PATH, operator.lt)]:
+  classes = [('pos', POS_PATH, operator.gt), ('neg', NEG_PATH, operator.lt)]
+  tp = tn = fn = fp = 0
+  for label, path, op in classes:
     if label not in tests:
       continue
     correct = counter = 0
-    print "Compiling file list..."
+    print "Compiling file list... (%s)" % label
     files = glob(path+"/[!.]*.txt")
-    print "Analyzing files..."
+    print "Analyzing files... (%s)" % label
     files_len = len(files)
     for file in files:
       with open(file, 'r') as f:
@@ -37,8 +40,22 @@ def score(analyze, tests=[]):
     else:
       res += "%s --> Correct: %6d Tested: %6d Ratio: %6.3f\n" % \
         (label, correct, counter, float(correct)/counter)
+      if label == classes[0][0]:
+        # positives, calculate False Negatives
+        fn = counter - correct
+        tp = counter
+      else:
+        # negatives, calculate False Positives
+        fp = counter - correct
+        tn = counter
 
   print res
+
+  precision = float(tp)/(tp + fn)
+  recall = float(tp)/(tp + fp)
+  print "Precision: %f\nRecall: %f" % (precision, recall)
+  print "F-score: %f" % (2*precision*recall/(precision+recall))
+
 
 """
   Run on assumption multiple text snippets in
@@ -53,7 +70,9 @@ def score_merged(analyze, tests=[]):
   if not tests:
     tests = ['pos','neg']
 
-  for label, path, op in [('pos', POS_PATH, operator.gt), ('neg', NEG_PATH, operator.lt)]:
+  classes = [('pos', POS_PATH, operator.gt), ('neg', NEG_PATH, operator.lt)]
+  tp = tn = fn = fp = 0
+  for label, path, op in classes:
     if label not in tests:
       continue
     correct = counter = 0
@@ -65,8 +84,23 @@ def score_merged(analyze, tests=[]):
     if counter < 1:
       print "%s ---> no tests were run." % label
     else:
+      if label == classes[0][0]:
+        # positives, calculate False Negatives
+        fn = counter - correct
+        tp = counter
+      else:
+        # negatives, calculate False Positives
+        fp = counter - correct
+        tn = counter
+
       print "%s --> Correct: %d Tested: %d Ratio: %f" % \
-        (label, correct, counter, float(correct)/counter)        
+        (label, correct, counter, float(correct)/counter)
+
+  precision = float(tp)/(tp + fn)
+  recall = float(tp)/(tp + fp)
+  print "Precision: %f\nRecall: %f" % (precision, recall)
+  print "F-score: %f" % (2*precision*recall/(precision+recall))
+
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
@@ -83,4 +117,4 @@ if __name__ == '__main__':
   classifier = eval("__import__('%s').%s" % (module,func))
   analyze = classifier().analyze
   tests = sys.argv[idx+1:]
-  score(analyze, tests)
+  score_merged(analyze, tests)
