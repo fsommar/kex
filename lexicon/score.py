@@ -4,7 +4,7 @@ MAIN_PATH = "../data/aclImdb/test"
 POS_PATH = MAIN_PATH + "/pos"
 NEG_PATH = MAIN_PATH + "/neg"
 
-def score(analyzer, tests=[]):
+def score(analyze, tests=[]):
   import operator
   from glob import glob
 
@@ -21,7 +21,7 @@ def score(analyzer, tests=[]):
       if file.startswith("\."):
         continue
       with open(file, 'r') as f:
-        if op(analyzer(f.read()),0):
+        if op(analyze(f.read()),0):
           correct += 1
         counter += 1
     if counter < 1:
@@ -32,9 +32,12 @@ def score(analyzer, tests=[]):
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
-    print "Usage: %s <package.analyzer> [tests]" % sys.argv[0]
+    print "Usage: %s <package.classifier> [tests]" % sys.argv[0]
+    print "The classifier must contain a method 'analyze'" + \
+      "\nwhich takes a text snippet as its only argument."    
     sys.exit(1)
   module,func = sys.argv[1].split('.')
-  analyzer = eval("__import__('%s').%s" % (module,func))
+  classifier = eval("__import__('%s').%s" % (module,func))
+  analyze = classifier().analyze
   tests = sys.argv[2:]
-  score(analyzer, tests)
+  score(analyze, tests)
