@@ -1,6 +1,7 @@
 # sizeable lexicons
 data/SWN
 data/aclImdb
+data/archives
 
 # Byte-compiled / optimized / DLL files
 ._*
