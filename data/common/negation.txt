@@ -1,4 +1,10 @@
 not
+neither
+don't
+dont
 isn't
+isnt
 weren't
+werent
 wasn't
+wasnt
