@@ -7,6 +7,19 @@ import string
 """
 class Lexicon(object):
 
+    def __init__(self, path="../data"):
+        self.path = path
+        self.run()
+
+    def run(self):
+        # use afinn-111 as dictionary
+        with open(self.path + "/afinn/AFINN-111.txt", "r") as afinn:
+            self.sentiment_dictionary = dict(map(lambda (k,v): \
+                (k,int(v)),[line.split('\t') for line in afinn]))
+
+        with open(self.path + "/common/negation.txt", "r") as neg:
+            self.negation_list = neg.read().splitlines()
+
     # the polarity of sentiment words is shifted if a
     # negation word is within NEGATION.RANGE of that word
     NEGATION_RANGE = 8
@@ -15,13 +28,8 @@ class Lexicon(object):
     # it will be considered negative
     POS_TRESHOLD = 3
 
-    # use afinn-111 as dictionary
-    with open("../data/afinn/AFINN-111.txt", "r") as afinn:
-        sentiment_dictionary = dict(map(lambda (k,v): \
-            (k,int(v)),[line.split('\t') for line in afinn]))
-
-    with open("../data/common/negation.txt", "r") as neg:
-        negation_list = neg.read().splitlines()
+    def classify(self, data):
+        return [self.analyze(x) for x in data]
 
     def analyze(self, snippet):
         # remove punctuation chars
