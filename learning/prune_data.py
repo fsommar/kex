@@ -27,4 +27,6 @@ def prune():
 
         targets += [target_names.index(label)]*len_files[label]
 
+    print "Done."
+
     return (data, targets, target_names)
