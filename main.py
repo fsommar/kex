@@ -34,7 +34,7 @@ def main():
   hybrid_expected = validation["target"]
 
   # print metrics
-  target_names = ["pos", "neg"]
+  target_names = ["neg", "pos"]
   print "Lexicon"
   print(metrics.classification_report(lex_expected, lex_predicted, target_names=target_names))
   print "Learning"
