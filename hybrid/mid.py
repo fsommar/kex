@@ -11,7 +11,7 @@ def prune(validation, data, target, ratio=1):
     # decide cut off point
     cutoff = int(ratio * len(target_data) // 2)
     # grab bottom and top cutoffs
-    target_data = target_data[:cutoff] + target_data[cutoff:]
+    target_data = target_data[:cutoff] + target_data[-cutoff:]
 
   # remove zeroes and change values to 0, 1
   target_data = [(1 if t > 0 else 0, d, v) for (t, d, v) in target_data if not t == 0]

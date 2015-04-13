@@ -26,12 +26,12 @@ class Lexicon(object):
 
     # if the sentiment value is lower than this trashold
     # it will be considered negative
-    POS_TRESHOLD = 3
+    POS_THRESHOLD = 3
 
-    def classify(self, data):
-        return [self.analyze(x) for x in data]
+    def classify(self, data, **kwargs):
+        return [self.analyze(x, **kwargs) for x in data]
 
-    def analyze(self, snippet):
+    def analyze(self, snippet, threshold=POS_THRESHOLD):
         # remove punctuation chars
         snippet = snippet.translate(None, string.punctuation)
         words = snippet.lower().split()
@@ -49,4 +49,4 @@ class Lexicon(object):
             sentiment_value = self.sentiment_dictionary.get(word, 0)
             sum += sentiment_value if not negate_flag else -1 * sentiment_value
 
-        return sum - self.POS_TRESHOLD
+        return sum - threshold

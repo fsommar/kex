@@ -4,6 +4,9 @@ from hybrid import split_data, mid
 from learning import learning
 from lexicon.lexicon import Lexicon
 
+MID_RATIO = 0.3
+LEXICON_THRESHOLD = 0
+
 def main():
   # grab data
   print "Split data..."
@@ -12,7 +15,7 @@ def main():
   # lexicon-based approach
   print "Lexicon..."
   lexicon = Lexicon("data")
-  lex_predicted = lexicon.classify(validation["data"])
+  lex_predicted = lexicon.classify(validation["data"], threshold=LEXICON_THRESHOLD)
   lex_expected, _, lex_predicted = mid.prune(validation["target"], training["data"], lex_predicted)
 
   # learning-based approach
@@ -23,8 +26,8 @@ def main():
 
   # combined, hybrid approach
   print "Hybrid..."
-  hybrid_lex_target = lexicon.classify(training["data"])
-  _, hybrid_data, hybrid_lex_predicted = mid.prune(validation["target"], training["data"], hybrid_lex_target, ratio=0.4)
+  hybrid_lex_target = lexicon.classify(training["data"], threshold=LEXICON_THRESHOLD)
+  _, hybrid_data, hybrid_lex_predicted = mid.prune(validation["target"], training["data"], hybrid_lex_target, ratio=MID_RATIO)
 
   hybrid_clf = learning.train(hybrid_data, hybrid_lex_predicted)
   hybrid_predicted = hybrid_clf.predict(validation["data"])
