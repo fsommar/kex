@@ -1,37 +1,41 @@
-import string
+import string, os
 
-"""
-    Features:
-        * Simple summing of sentiment words (-5 .. 5)
-        * Checking for negation words in the vincinity of each sentiment words
-"""
 class Lexicon(object):
-
-    def __init__(self, path="../data"):
-        self.path = path
-        self.run()
-
-    def run(self):
-        # use afinn-111 as dictionary
-        with open(self.path + "/afinn/AFINN-111.txt", "r") as afinn:
-            self.sentiment_dictionary = dict(map(lambda (k,v): \
-                (k,int(v)),[line.split('\t') for line in afinn]))
-
-        with open(self.path + "/common/negation.txt", "r") as neg:
-            self.negation_list = neg.read().splitlines()
+    """
+        Features:
+            * Simple summing of sentiment words (-5 .. 5)
+            * Checking for negation words in the vincinity of each sentiment words
+    """
 
     # the polarity of sentiment words is shifted if a
-    # negation word is within NEGATION.RANGE of that word
+    # negation word is within this range of that word
     NEGATION_RANGE = 8
 
-    # if the sentiment value is lower than this trashold
+    # if the sentiment value is lower than this threshold
     # it will be considered negative
     POS_THRESHOLD = 3
 
-    def classify(self, data, **kwargs):
-        return [self.analyze(x, **kwargs) for x in data]
+    MAIN_PATH = os.path.dirname(__file__) + "/../data"
+
+    # use afinn-111 as dictionary
+    with open(MAIN_PATH + "/afinn/AFINN-111.txt", "r") as afinn:
+        sentiment_dictionary = dict(map(lambda (k,v): \
+            (k,int(v)), [line.split('\t') for line in afinn]))
+
+    with open(MAIN_PATH + "/common/negation.txt", "r") as neg:
+        negation_list = neg.read().splitlines()
+
+    def classify(self, snippets, **kwargs):
+        """
+          Take a list of snippets and returns a list of polarity values.
+        """
+        return [self.analyze(x, **kwargs) for x in snippets]
 
     def analyze(self, snippet, threshold=POS_THRESHOLD):
+        """
+          Returns an int in the range -5 .. 5 representing
+          the polarity value of the snippet.
+        """
         # remove punctuation chars
         snippet = snippet.translate(None, string.punctuation)
         words = snippet.lower().split()

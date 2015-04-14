@@ -1,7 +1,0 @@
-TODO:
-
-[ ] parallelize score script
-[x] add support for negation words
-[ ] add support for intensifiers
-[/] assemble proper negation and intesifiers dictionaries
-[ ] add support for more dictionaries

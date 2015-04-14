@@ -1,7 +1,7 @@
 # vim: tabstop=2 softtabstop=2 shiftwidth=2 expandtab
-import sys, operator
+import sys, operator, os
 
-MAIN_PATH = "../data/aclImdb/test"
+MAIN_PATH = os.path.dirname(__file__) + "/../data/aclImdb/test"
 VERBOSE = False
 
 """
