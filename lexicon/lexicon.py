@@ -3,7 +3,7 @@ import string, os
 class Lexicon(object):
     """
         Features:
-            * Simple summing of sentiment words (-5 .. 5)
+            * Simple summing of sentiment words (negative .. positive)
             * Checking for negation words in the vincinity of each sentiment words
     """
 
@@ -31,9 +31,9 @@ class Lexicon(object):
         """
         return [self.analyze(x, **kwargs) for x in snippets]
 
-    def analyze(self, snippet, threshold=POS_THRESHOLD):
+    def analyze(self, snippet, neg_range=NEGATION_RANGE, threshold=POS_THRESHOLD):
         """
-          Returns an int in the range -5 .. 5 representing
+          Returns an int in the range negative .. positive representing
           the polarity value of the snippet.
         """
         # remove punctuation chars
@@ -48,7 +48,7 @@ class Lexicon(object):
                 negate_counter = 0
                 continue
             negate_counter += 1
-            if negate_counter >= self.NEGATION_RANGE:
+            if negate_counter >= neg_range:
                 negate_flag = False
             sentiment_value = self.sentiment_dictionary.get(word, 0)
             sum += sentiment_value if not negate_flag else -1 * sentiment_value
